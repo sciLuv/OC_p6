@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -6,10 +8,10 @@ const path = require('path');
 
 const app = express();
 
-const userRoutes = require('./routes/user');
+const userRoutes = require('./routes/user'); 
 const sauceRoutes = require('./routes/sauces');
 
-mongoose.connect('mongodb+srv://sciluv:cestfacile@cluster0.exnub1l.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect(process.env.DB_CONNECT,
     {   useNewUrlParser : true,
         useUnifiedTopology : true})
     .then(() => console.log("connexion à MongoDB réussi !"))
