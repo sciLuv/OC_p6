@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-
+/* Utilisation des schemas de mongoose pour creer l'objet sauce. 
+   Certain doivent avoir une forme par defaut car non créer dans le formulaire lié a l'objet dans le HTML*/
 const saucesSchema  = mongoose.Schema({
     userId : {type : String, required : true},
     name : {type : String, required : true},
@@ -15,4 +16,5 @@ const saucesSchema  = mongoose.Schema({
     usersDisliked : {type : Array, default: []}
 })
 
+//on exporte le schema en tant que model d'objet représentant la sauce
 module.exports = mongoose.model('Sauces', saucesSchema);

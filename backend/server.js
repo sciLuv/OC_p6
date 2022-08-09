@@ -1,8 +1,11 @@
+//Package permettant de mettre les variables d'envirronnement en dehors du code lui même.
 require('dotenv').config();
 
+//import de l'application de l'api
 const http = require('http');
 const app = require('./app');
 
+//transforme un port écrit en string en nombre
 const normalizePort = val => {
   const port = parseInt(val, 10);
 
@@ -15,6 +18,8 @@ const normalizePort = val => {
   return false;
 };
 
+
+//déclaration du port sur lequel le serveur va executer le backend 
 const port = normalizePort(process.env.PORT);
 app.set('port', port);
 
@@ -38,8 +43,10 @@ const errorHandler = error => {
   }
 };
 
+//création du serveur
 const server = http.createServer(app);
 
+//prévois les erreur ou l'écoute réussite du serveur
 server.on('error', errorHandler);
 server.on('listening', () => {
   const address = server.address();
