@@ -28,7 +28,7 @@ retourner dans le dossier racine du projet et entrer ensuite les ligne suivantes
 
 Pour pouvoir acceder a l'application il faudra ensuite créer vos variables d'environnement sous la forme précisée dans le fichier .env-example.
 
-## Technologie utilisée 
+## Technologies utilisées
 
 pour ce qui est du back-end les technologies utilisées sont : 
 - node JS
