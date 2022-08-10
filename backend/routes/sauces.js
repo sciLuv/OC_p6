@@ -13,19 +13,20 @@ const router = express.Router();
 const saucesCtrl = require('../controllers/sauces');
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
-const right = require('../middleware/have-right');
+const right = require('../middleware/right');
 
+const sanitize = require('../middleware/sanitize');
 
 //Post de création de sauce
-router.post('/', auth, multer, saucesCtrl.createSauce);
+router.post('/', auth, multer, sanitize, saucesCtrl.createSauce);
 //Get pour récupérer l'ensemble des sauces
 router.get('/', auth, multer, saucesCtrl.getAllSauces);
 //Get pour récupérer une sauce en particulier (via l'id) 
 router.get('/:id', auth, multer, saucesCtrl.getOneSauce);
 //Put pour modifier les informations lié à une sauce
-router.put('/:id', auth, multer, right.sauceRight, saucesCtrl.modifySauce);
+router.put('/:id', auth, multer, right.authorRight, sanitize, saucesCtrl.modifySauce);
 //Delete pour supprimer une sauce de la base de donnée
-router.delete('/:id', auth, multer, right.sauceRight, saucesCtrl.deleteSauce);
+router.delete('/:id', auth, multer, right.authorRight, saucesCtrl.deleteSauce);
 
 //Post pour gerer les like/dislike
 router.post('/:id/like', auth, multer, saucesCtrl.likeSauce);

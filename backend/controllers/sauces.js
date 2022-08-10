@@ -16,8 +16,6 @@ exports.createSauce = (req, res, next) => {
     delete sauceObject._id;
     delete sauceObject._userId;
 
-    sanitize.sanitizeSauce(sauceObject);
-
     const sauce = new Sauces({
         ...sauceObject,
         userId: req.auth.userId,

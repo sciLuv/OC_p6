@@ -1,22 +1,30 @@
 // permet d'éviter le signe dollars dans le contenue transmis à la base de donnée.
-exports.sanitizeSauce = (sauce) => {
-    let newName = sauce.name.split("$").join('');
-    let newManufacturer = sauce.manufacturer.split("$").join('');
-    let newDescription = sauce.description.split("$").join('');
-    let newIngredient = sauce.mainPepper.split("$").join('');
+module.exports = (req, res, next) => {
+    let sauceObject;
+    if(req.method == "POST"){
+        sauceObject = JSON.parse(req.body.sauce);
+    } else {
+        sauceObject = req.body;
+    }
 
-    sauce.name = newName;
-    sauce.manufacturer = newManufacturer;
-    sauce.description = newDescription;
-    sauce.mainPepper = newIngredient;  
+    let newName = sauceObject.name.split("$").join('');
+    let newManufacturer = sauceObject.manufacturer.split("$").join('');
+    let newDescription = sauceObject.description.split("$").join('');
+    let newIngredient = sauceObject.mainPepper.split("$").join('');
+
+    let sauce = {
+        "name" : newName,
+        "manufacturer" : newManufacturer,
+        "description" : newDescription,
+        "mainPepper" : newIngredient,
+        "heat" : sauceObject.heat,
+        "userId" : sauceObject.userId   
+    }
     
-    return sauce;
+    if(req.method == "POST"){
+        req.body.sauce = JSON.stringify(sauce);
+    } else {
+        req.body = sauce;
+    }
+    next();
 }
-
-exports.sanitizeMail = (mail) => {
-    /* name
-    manufacturer
-    description */
-}
-
-

@@ -17,4 +17,4 @@ passwordSchema
 .has().not().symbols()
 .is().not().oneOf(['Azerty123']);
 
-exports.passwordSchema = passwordSchema;
+

@@ -3,7 +3,7 @@ const Sauces = require('../models/Sauces');
 
 
 //Permet de vérifié si l'utilisateur est autorisé à modifier le contenue d'une sauce. 
-exports.sauceRight = (req, res, next) => {
+exports.authorRight = (req, res, next) => {
     Sauces.findOne({ _id: req.params.id})
         .then(sauce => {
             if (sauce.userId != req.auth.userId) {
