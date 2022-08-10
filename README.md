@@ -33,12 +33,11 @@ Pour pouvoir acceder a l'application il faudra ensuite créer vos variables d'en
 pour ce qui est du back-end les technologies utilisées sont : 
 - node JS
 - express
+- mongoDB
 - mongoose
 - mongoose-unique-validator
 - bcrypt
+- jsonwebtoken
 - password-validator
 - dotenv
-- jsonwebtoken
 - cors
-
-et plusieurs autres 
