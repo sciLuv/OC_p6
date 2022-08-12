@@ -5,15 +5,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 //Package permettant la création de regle pour l'écriture de mot de pass
 const passwordValidator = require('password-validator');
+//pakage permettant grace a sa methode isEmail de valider la forme que prend l'email passé par l'utilisateur, et de lui ajouté des caractere interdit  
+const validator = require('validator');
 
 //on appel les modeles du mot de passe et des user
 const User = require('../models/User');
 const password = require('../models/Password');
-
-
-
-//pakage permettant grace a sa methode isEmail de valider la forme que prend l'email passé par l'utilisateur, et de lui ajouté des caractere interdit  
-const validator = require('validator');
 
 /*  middleware lié à la création d'un nouvel utilisateur :
     Si l'email correspond au modele attendu par validator.isEmail puis
@@ -39,7 +36,7 @@ exports.signup = (req, res, next) => {
             res.status(400).json({ message : 'Le mot de passe ne doit pas avoir de symbole et doit avoir 8 caractères minimum, une majuscule et un chiffre au moins !'});
         }
     } else {
-        res.status(401).json({ message : 'L\'adresse mail n\'est pas dans un format correcte'});
+        res.status(401).json({ message : 'L\'adresse mail n\'est pas dans un format correcte.'});
     }
 }
 
