@@ -11,30 +11,36 @@ const User = require('../models/User');
 const password = require('../models/Password');
 
 
+
+//pakage permettant grace a sa methode isEmail de valider la forme que prend l'email passé par l'utilisateur, et de lui ajouté des caractere interdit  
+const validator = require('validator');
+
 /*  middleware lié à la création d'un nouvel utilisateur :
+    Si l'email correspond au modele attendu par validator.isEmail puis
     si le mot de passe passé par l'utilisateur est conforme au schema prévu : (methode validate de password-validator)
     il est passé a bcrypt qui le crypte et le passe a l'objet user en tant que mot de passe
     l'objet user est ensuite envoyer à la base de données
 */ 
 exports.signup = (req, res, next) => {
-    //
-    if(password.passwordSchema.validate(req.body.password)){
-        //il est hashé et crypté avec bcrypt
-        bcrypt.hash(req.body.password, Number(process.env.BCRYPT_SALT))
-        .then( hash =>{
-            const user = new User({
-                email : req.body.email,
-                password : hash
-            });
-            user.save()
-                .then(() => res.status(201).json({ message : 'Utilisateur crée !'}))
-                .catch(error => res.status(400).json({ error} + "Une erreur de transmission de donnée est survenue." ));
-        })
-        .catch( error => res.status(500).json({ error }  + "Une erreur de serveur est survenue." ));   
+    if(validator.isEmail(req.body.email, {blacklisted_chars: '$&µ*%ù~²£¤#^@+[ç!àè§:)(}\'|{\""/='}) == true){
+        if(password.validate(req.body.password)){
+            bcrypt.hash(req.body.password, Number(process.env.BCRYPT_SALT))
+            .then( hash =>{
+                const user = new User({
+                    email : req.body.email,
+                    password : hash
+                });
+                user.save()
+                    .then(() => res.status(201).json({ message : 'Utilisateur crée !'}))
+                    .catch(error => res.status(400).json({ error} + "Une erreur de transmission de donnée est survenue." ));
+            })
+            .catch( error => res.status(500).json({ error }  + "Une erreur de serveur est survenue." ));   
+        } else {
+            res.status(400).json({ message : 'Le mot de passe ne doit pas avoir de symbole et doit avoir 8 caractères minimum, une majuscule et un chiffre au moins !'});
+        }
     } else {
-        res.status(400).json({ message : 'Le mot de passe ne doit pas avoir de symbole et doit avoir 8 caractères minimum, une majuscule et un chiffre au moins !'});
+        res.status(401).json({ message : 'L\'adresse mail n\'est pas dans un format correcte'});
     }
-
 }
 
 /*  Middleware lié au login de l'utilisateur et à la création d'un token de session
@@ -42,6 +48,7 @@ exports.signup = (req, res, next) => {
     si il est présent (user non null) dans la base de donnée on compare le mot de passe rentrer avec celui en base de donnée avec bcrypt.compare
     si ils sont semblable on construit un token avec json web token et on le passe dans la réponse du serveur */
 exports.login = (req, res, next) => {
+     
     User.findOne({email : req.body.email})
         .then(user => {
             if(user === null){

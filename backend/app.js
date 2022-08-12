@@ -8,6 +8,7 @@ const cors = require('cors');
 //Package interne nodeJS permettant de travailler avec les chemins des fichiers et répertoires.
 const path = require('path');
 
+
 //Appel d'express sous la constante app.
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(express.json());
 
 //appel de la methode cors() du package appelé précédemment
 app.use(cors());
+
 
 //rend les images accessibles pour toutes les requêtes vers la route associé aux images
 app.use('/images', express.static(path.join(__dirname, 'images')));
