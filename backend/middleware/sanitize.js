@@ -3,8 +3,15 @@ module.exports = (req, res, next) => {
     let sauceObject;
     if(req.method == "POST"){
         sauceObject = JSON.parse(req.body.sauce);
+        console.log(sauceObject);
     } else {
-        sauceObject = req.body;
+        if(req.file != null){
+            sauceObject = JSON.parse(req.body.sauce);
+            console.log(sauceObject);
+        } else {
+            sauceObject = req.body;
+            console.log(sauceObject);
+        }
     }
 
     let newName = sauceObject.name.split("$").join('');
@@ -24,7 +31,13 @@ module.exports = (req, res, next) => {
     if(req.method == "POST"){
         req.body.sauce = JSON.stringify(sauce);
     } else {
-        req.body = sauce;
+        if(req.file != null){
+            req.body.sauce = JSON.stringify(sauce);
+        }
+        else{
+            req.body = sauce;
+        }
+        
     }
     next();
 }

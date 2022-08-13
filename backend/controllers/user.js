@@ -18,6 +18,8 @@ const password = require('../models/Password');
     il est passé a bcrypt qui le crypte et le passe a l'objet user en tant que mot de passe
     l'objet user est ensuite envoyer à la base de données
 */ 
+
+
 exports.signup = (req, res, next) => {
     if(validator.isEmail(req.body.email, {blacklisted_chars: '$&µ*%ù~²£¤#^@+[ç!àè§:)(}\'|{\""/='}) == true){
         if(password.validate(req.body.password)){
