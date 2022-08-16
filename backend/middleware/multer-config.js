@@ -8,13 +8,15 @@ const MIME_TYPES = {
   'image/png': 'png'
 };
 
+
 //fonction qui utilise des methodes de multer pour pouvoir récuperer l'image et lui donner un nom spécifique 
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, 'images');
   },
   filename: (req, file, callback) => {
-    const name = file.originalname.split(' ').join('_');
+    const beforeName = file.originalname.split(' ').join('_');
+    const name = beforeName.substring(0, beforeName.lastIndexOf('.'))
     const extension = MIME_TYPES[file.mimetype];
     callback(null, name + Date.now() + '.' + extension);
   }
@@ -22,3 +24,7 @@ const storage = multer.diskStorage({
 
 //exporte la fonction précédente pour l'inclure dans les routes des sauces
 module.exports = multer({storage: storage}).single('image');
+
+
+
+

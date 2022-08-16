@@ -42,3 +42,4 @@ pour ce qui est du back-end les technologies utilisées sont :
 - dotenv
 - cors
 - validator
+- crypto-js

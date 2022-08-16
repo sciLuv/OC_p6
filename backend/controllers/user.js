@@ -8,25 +8,28 @@ const passwordValidator = require('password-validator');
 //pakage permettant grace a sa methode isEmail de valider la forme que prend l'email passé par l'utilisateur, et de lui ajouté des caractere interdit  
 const validator = require('validator');
 
+
+const cryptoJS = require('crypto-js');
+
+
 //on appel les modeles du mot de passe et des user
 const User = require('../models/User');
 const password = require('../models/Password');
 
 /*  middleware lié à la création d'un nouvel utilisateur :
-    Si l'email correspond au modele attendu par validator.isEmail puis
+    Si l'email correspond au modele attendu par validator.isEmail, on cryptele mot de passe puis
     si le mot de passe passé par l'utilisateur est conforme au schema prévu : (methode validate de password-validator)
     il est passé a bcrypt qui le crypte et le passe a l'objet user en tant que mot de passe
     l'objet user est ensuite envoyer à la base de données
 */ 
-
-
 exports.signup = (req, res, next) => {
     if(validator.isEmail(req.body.email, {blacklisted_chars: '$&µ*%ù~²£¤#^@+[ç!àè§:)(}\'|{\""/='}) == true){
+        const cryptedMail = cryptoJS.HmacSHA256(req.body.email, process.env.CRYPTO_JS_SECRET_SENTENCE).toString();
         if(password.validate(req.body.password)){
             bcrypt.hash(req.body.password, Number(process.env.BCRYPT_SALT))
             .then( hash =>{
                 const user = new User({
-                    email : req.body.email,
+                    email : cryptedMail,
                     password : hash
                 });
                 user.save()
@@ -43,12 +46,12 @@ exports.signup = (req, res, next) => {
 }
 
 /*  Middleware lié au login de l'utilisateur et à la création d'un token de session
-    on recherche un user par son mail.
+    on crypte l'email passé par l'utilisateur et on recherche un user via l'email crypté.
     si il est présent (user non null) dans la base de donnée on compare le mot de passe rentrer avec celui en base de donnée avec bcrypt.compare
     si ils sont semblable on construit un token avec json web token et on le passe dans la réponse du serveur */
 exports.login = (req, res, next) => {
-     
-    User.findOne({email : req.body.email})
+    const cryptedMail = cryptoJS.HmacSHA256(req.body.email, process.env.CRYPTO_JS_SECRET_SENTENCE).toString();
+    User.findOne({email : cryptedMail})
         .then(user => {
             if(user === null){
                 res.status(401).json({ message : 'Paire identifiant/mot de passe incorrecte !'});

@@ -3,14 +3,11 @@ module.exports = (req, res, next) => {
     let sauceObject;
     if(req.method == "POST"){
         sauceObject = JSON.parse(req.body.sauce);
-        console.log(sauceObject);
     } else {
         if(req.file != null){
             sauceObject = JSON.parse(req.body.sauce);
-            console.log(sauceObject);
         } else {
             sauceObject = req.body;
-            console.log(sauceObject);
         }
     }
 

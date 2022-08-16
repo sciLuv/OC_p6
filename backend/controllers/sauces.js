@@ -6,21 +6,19 @@ const Sauces = require('../models/Sauces');
 //Middleware qui permet de vérifier certains contenue sensible à la sécurité dans les champs remplis par l'utilisateur
 const sanitize = require('../middleware/sanitize');
 
-/* création de la sauce : 
-    supprime l'id et le userID initialement mis dans la requete (delete)
-    puis cree un objet sauce a partir d'element de la requete et lui assigne un id et ajoute l'image. (new Sauces)
-    Finalement, envoie l'objet crée sur la base de données
-      */
+// création de la sauce : 
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
+    //supprime l'id et le userID initialement mis dans la requete (delete).
     delete sauceObject._id;
     delete sauceObject._userId;
-
+    //puis cree un objet sauce a partir d'element de la requete et lui assigne un id et ajoute l'image. (new Sauces)
     const sauce = new Sauces({
         ...sauceObject,
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
+    //Finalement, envoie l'objet crée sur la base de données.
     sauce.save()
     .then(() => { res.status(201).json({message: 'Sauce enregistré !'})})
     .catch(error => { res.status(400).json( { error } + "Une erreur de transmission de donnée est survenue." )})
@@ -40,20 +38,29 @@ exports.getOneSauce = (req, res, next) => {
         .catch( error => res.status(200).json({ error} + "Une erreur de transmission de donnée est survenue."));
 }
 
-/*  Pour modifier une sauce déjà crée
-    On récupere la route de l'image, 
-    Puis on va chercher une sauce, via son id, passé en paramettre de l'url (findOne) 
-    Puis on va changer les information de la base de donnée avec celle de la requete (updateOne)*/
-
+//Pour modifier une sauce déjà crée
 exports.modifySauce = (req, res, next) => {
+    //on vérifie si la requete possede une image, si c'est le cas on creer l'url de la nouvelle image
     const sauceObject = req.file ? {
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    //si ce n'est pas le cas on récupere l'objet dans le corps de la requete.
     } : { ...req.body };
 
+    //pour sécuriser l'app on supprime l'actuel id de l'utilisateur de la requete, par mesure de sécurité.
     delete sauceObject._userId;
+    //On va chercher une sauce, via son id, passé en paramettre de l'url (findOne) 
     Sauces.findOne({_id: req.params.id})
-        .then(() => {
+        .then(sauce => {
+    //si l'image de la sauce est modifiée, on supprime l'ancienne
+            if(req.file){
+                const filename = sauce.imageUrl.split('/images/')[1];
+                fs.unlink(`images/${filename}`,(err) => {
+                    if (err) throw err;
+                    console.log('Fichier supprimé !');
+                 });
+            }
+    //Puis on va changer les information de la base de donnée avec celle de la requete (updateOne)
             Sauces.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
             .then(() => res.status(200).json({message : 'Sauce modifiée !'}))
             .catch(error => res.status(401).json({ error } + "Il manque une information dans les champs qui représente votre sauce."));
