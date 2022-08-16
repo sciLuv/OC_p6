@@ -36,10 +36,12 @@ pour ce qui est du back-end les technologies utilisées sont :
 - mongoDB
 - mongoose
 - mongoose-unique-validator
+- dotenv
 - bcrypt
+- crypto-js
 - jsonwebtoken
 - password-validator
-- dotenv
+- helmet
 - cors
 - validator
-- crypto-js
+- express-rate-limit

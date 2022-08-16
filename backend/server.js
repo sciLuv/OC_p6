@@ -1,8 +1,9 @@
 //Package permettant de mettre les variables d'envirronnement en dehors du code lui même.
 require('dotenv').config();
 
-//import de l'application de l'api
+//import du module http de NODE JS qui nous permet de transferer des informations via ce protocole.
 const http = require('http');
+//import de l'application de l'api
 const app = require('./app');
 
 //transforme un port écrit en string en nombre
